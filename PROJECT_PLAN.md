@@ -30,7 +30,7 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 ## 🔵 SEZIONE 2 — BACKLOG (Operativo)
 
 ### 🏗️ Architettura & Sistemi Core
-- `[ ]` Setup progetto Rust + Bevy (minimal geometric style)
+- `[x]` Setup progetto Rust + Bevy (minimal geometric style) — CEN-001
 - `[ ]` Sistema di Turni e risorsa globale `Steps`
 - `[ ]` Generatore di stanze 8x8 deterministico
 
@@ -52,4 +52,4 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ---
 
-*Ultimo aggiornamento: 2026-04-14*
+*Ultimo aggiornamento: 2026-04-15*
