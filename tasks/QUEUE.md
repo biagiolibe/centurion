@@ -2,7 +2,7 @@
 
 ## In Lavorazione 🚧
 
-- `[ ]` **CEN-002**: Game State Machine (`GameState`)
+- `[ ]` **CEN-003**: Generatore Stanza 8x8 Deterministico
 
 ---
 
@@ -10,7 +10,7 @@
 
 ### Core Infrastructure (Foundation & State)
 1. `[x]` **CEN-001**: Foundation — App Bevy, Plugin Architecture, Rendering Geometrico
-2. `[ ]` **CEN-002**: Game State Machine (`GameState`) — Loading → Room → CombatEvent → Rest → Dead
+2. `[x]` **CEN-002**: Game State Machine (`GameState`) — Loading → Room → CombatEvent → Rest → Dead
 
 ### World & Grid Foundation
 3. `[ ]` **CEN-003**: Generatore Stanza 8x8 Deterministico
@@ -38,6 +38,7 @@
 - `[x]` Definizione del concept iniziale (GDD)
 - `[x]` Inizializzazione struttura progetto
 - `[x]` **CEN-001**: Foundation — App Bevy, Plugin Architecture, Rendering Geometrico
+- `[x]` **CEN-002**: Game State Machine (`GameState`)
 
 ---
 
@@ -54,4 +55,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-15 — CEN-001 completato*
+*Ultimo aggiornamento: 2026-04-15 — CEN-001, CEN-002 completati*
