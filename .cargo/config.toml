@@ -1,0 +1,14 @@
+# Enable fast linking for dev builds
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# WASM optimizations
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals"]
+
+[env]
+# This is a common Bevy optimization to speed up compilation
+BEVY_DYNAMIC_LINKING = "1"
