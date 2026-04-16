@@ -32,7 +32,7 @@ pub struct PlayerBundle {
     pub grid_pos: GridPos,
     pub sprite: Sprite,
     pub transform: Transform,
-    pub state_scoped: StateScoped<GameState::Room>,
+    pub despawn_on_exit: DespawnOnExit<GameState>,
 }
 ```
 
@@ -63,7 +63,6 @@ pub struct PlayerBundle {
 ```rust
 fn spawn_player(
     mut commands: Commands,
-    config: Res<CenturionConfig>,
 ) {
     let start_pos = GridPos { x: 1, y: 1 };
     let world_pos = grid_to_world(start_pos);
@@ -74,16 +73,16 @@ fn spawn_player(
         force: Force(5),
         grid_pos: start_pos,
         sprite: Sprite { color: Color::WHITE, ..default() },
-        transform: Transform::from_translation(world_pos.extend(0.0)),
-        state_scoped: StateScoped(GameState::Room),
+        transform: Transform::from_translation(world_pos.extend(1.0)),
+        despawn_on_exit: DespawnOnExit(GameState::Room),
     });
 }
 ```
 
 ## Criteri di Accettazione
-- [ ] Player spawna al grid position (1, 1) all'entrata di `Room`
-- [ ] Player circle è visibile in bianco
-- [ ] `CurrentSteps` inizia a 100
-- [ ] `Force` inizia a 5
-- [ ] Player entity è despawnato quando si esce da `Room` (grazie a `StateScoped`)
-- [ ] Due entità player non vengono create (spawn idempotente)
+- [x] Player spawna al grid position (1, 1) all'entrata di `Room`
+- [x] Player circle è visibile in bianco
+- [x] `CurrentSteps` inizia a 100
+- [x] `Force` inizia a 5
+- [x] Player entity è despawnato quando si esce da `Room` (grazie a `DespawnOnExit`)
+- [x] Due entità player non vengono create (spawn idempotente)

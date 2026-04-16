@@ -2,7 +2,7 @@
 
 ## In Lavorazione 🚧
 
-- `[ ]` **CEN-004**: Entità Giocatore — Componenti e Spawn
+- `[ ]` **CEN-005**: Input System con leafwing-input-manager
 
 ---
 
@@ -14,7 +14,7 @@
 
 ### World & Grid Foundation
 3. `[x]` **CEN-003**: Generatore Stanza 8x8 Deterministico
-4. `[ ]` **CEN-004**: Entità Giocatore — Componenti e Spawn
+4. `[x]` **CEN-004**: Entità Giocatore — Componenti e Spawn
 
 ### Input & Movement Loop
 5. `[ ]` **CEN-005**: Input System con leafwing-input-manager
@@ -40,6 +40,7 @@
 - `[x]` **CEN-001**: Foundation — App Bevy, Plugin Architecture, Rendering Geometrico
 - `[x]` **CEN-002**: Game State Machine (`GameState`)
 - `[x]` **CEN-003**: Generatore Stanza 8x8 Deterministico
+- `[x]` **CEN-004**: Entità Giocatore — Componenti e Spawn
 
 ---
 
@@ -56,4 +57,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-15 — CEN-001, CEN-002 completati*
+*Ultimo aggiornamento: 2026-04-16 — CEN-004 completato*

@@ -3,6 +3,7 @@ use bevy::app::PluginGroupBuilder;
 use crate::rendering::CenturionRenderPlugin;
 use crate::config::CenturionConfig;
 use crate::map_gen::MapGenPlugin;
+use crate::player::PlayerPlugin;
 
 pub mod state_plugin;
 pub use state_plugin::StatePlugin;
@@ -15,6 +16,7 @@ impl PluginGroup for CenturionPlugins {
             .add(CenturionRenderPlugin)
             .add(StatePlugin)
             .add(MapGenPlugin)
+            .add(PlayerPlugin)
     }
 }
 

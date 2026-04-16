@@ -32,7 +32,7 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 ### 🏗️ Architettura & Sistemi Core
 - `[x]` Setup progetto Rust + Bevy (minimal geometric style) — CEN-001
 - `[ ]` Sistema di Turni e risorsa globale `Steps`
-- `[ ]` Generatore di stanze 8x8 deterministico
+- `[x]` Generatore di stanze 8x8 deterministico — CEN-003
 
 ### 🗺️ Mondo & Generazione
 - `[ ]` Algoritmo di distribuzione entità (Nemici, Consumabili, Uscita)
@@ -49,7 +49,10 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ### Milestones
 - `[x]` Definizione del concept iniziale (GDD)
+- `[x]` Foundation — App Bevy, Plugin Architecture, Rendering Geometrico — CEN-001
+- `[x]` Game State Machine (`GameState`) — CEN-002
+- `[x]` Generatore Stanza 8x8 Deterministico — CEN-003
 
 ---
 
-*Ultimo aggiornamento: 2026-04-15*
+*Ultimo aggiornamento: 2026-04-16*
