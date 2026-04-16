@@ -2,7 +2,7 @@
 
 ## In Lavorazione 🚧
 
-- `[ ]` **CEN-003**: Generatore Stanza 8x8 Deterministico
+- `[ ]` **CEN-004**: Entità Giocatore — Componenti e Spawn
 
 ---
 
@@ -13,7 +13,7 @@
 2. `[x]` **CEN-002**: Game State Machine (`GameState`) — Loading → Room → CombatEvent → Rest → Dead
 
 ### World & Grid Foundation
-3. `[ ]` **CEN-003**: Generatore Stanza 8x8 Deterministico
+3. `[x]` **CEN-003**: Generatore Stanza 8x8 Deterministico
 4. `[ ]` **CEN-004**: Entità Giocatore — Componenti e Spawn
 
 ### Input & Movement Loop
@@ -39,6 +39,7 @@
 - `[x]` Inizializzazione struttura progetto
 - `[x]` **CEN-001**: Foundation — App Bevy, Plugin Architecture, Rendering Geometrico
 - `[x]` **CEN-002**: Game State Machine (`GameState`)
+- `[x]` **CEN-003**: Generatore Stanza 8x8 Deterministico
 
 ---
 

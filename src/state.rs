@@ -9,16 +9,16 @@ use bevy::prelude::*;
 /// - Rest     → Room
 /// - Dead     → Loading
 ///
-/// PATTERN: Use `StateScoped<GameState>` on all in-game entities.
+/// PATTERN: Use `DespawnOnExit<GameState>` on all in-game entities.
 /// When exiting a state, Bevy automatically despawns all entities carrying
-/// `StateScoped(that_state)`. This ensures clean state transitions with no
+/// `DespawnOnExit(that_state)`. This ensures clean state transitions with no
 /// lingering entities from the previous state.
 ///
 /// Example:
-/// ```rust
+/// ```ignore
 /// commands.spawn((
 ///     MyComponent,
-///     StateScoped(GameState::Room),
+///     DespawnOnExit(GameState::Room),
 /// ));
 /// ```
 #[derive(States, Default, Debug, Clone, Copy, PartialEq, Eq, Hash)]
