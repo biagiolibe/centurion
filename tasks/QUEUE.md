@@ -2,7 +2,7 @@
 
 ## In Lavorazione 🚧
 
-- `[ ]` **CEN-005**: Input System con leafwing-input-manager
+(nessuno)
 
 ---
 
@@ -17,13 +17,13 @@
 4. `[x]` **CEN-004**: Entità Giocatore — Componenti e Spawn
 
 ### Input & Movement Loop
-5. `[ ]` **CEN-005**: Input System con leafwing-input-manager
-6. `[ ]` **CEN-006**: Movimento su Griglia e Consumo Passi
-7. `[ ]` **CEN-007**: Steps Counter HUD
+5. `[x]` **CEN-005**: Input System con leafwing-input-manager
+6. `[x]` **CEN-006**: Movimento su Griglia e Consumo Passi
+7. `[x]` **CEN-007**: Steps Counter HUD
 
 ### Combat & Entities
-8. `[ ]` **CEN-008**: Entità Nemici — Spawn e Comportamento Statico
-9. `[ ]` **CEN-009**: Risoluzione Combattimento Deterministico
+8. `[x]` **CEN-008**: Entità Nemici — Spawn e Comportamento Statico
+9. `[x]` **CEN-009**: Risoluzione Combattimento Deterministico
 10. `[ ]` **CEN-010**: Animazione Flash (bevy_tweening)
 
 ### Progression & Closure
@@ -41,6 +41,11 @@
 - `[x]` **CEN-002**: Game State Machine (`GameState`)
 - `[x]` **CEN-003**: Generatore Stanza 8x8 Deterministico
 - `[x]` **CEN-004**: Entità Giocatore — Componenti e Spawn
+- `[x]` **CEN-005**: Input System con MessageWriter (Bevy 0.18 native)
+- `[x]` **CEN-006**: Movimento su Griglia e Consumo Passi
+- `[x]` **CEN-007**: Steps Counter HUD
+- `[x]` **CEN-008**: Entità Nemici — Spawn e Comportamento Statico
+- `[x]` **CEN-009**: Risoluzione Combattimento Deterministico
 
 ---
 
@@ -57,4 +62,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-16 — CEN-004 completato*
+*Ultimo aggiornamento: 2026-04-18 — CEN-009 completato*
