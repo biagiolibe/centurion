@@ -24,8 +24,10 @@ fn spawn_rest_screen(
     let floor_cleared = config.current_floor.saturating_sub(1);
     let (steps, force) = persistence
         .as_ref()
-        .map(|p| (p.steps, p.force))
+        .map(|p| (p.steps - 20, p.force))  // Show pre-rest force and steps
         .unwrap_or((0, 0));
+
+    let force_after_rest = ((force / 5) + 1) * 5;
 
     commands
         .spawn((
@@ -56,6 +58,11 @@ fn spawn_rest_screen(
                 Text::new(format!("FORCE: {}", force)),
                 TextFont { font_size: 24.0, ..default() },
                 TextColor(Color::WHITE),
+            ));
+            parent.spawn((
+                Text::new(format!("FORCE after rest: {}", force_after_rest)),
+                TextFont { font_size: 24.0, ..default() },
+                TextColor(Color::srgb(1.0, 0.9, 0.0)),
             ));
             parent.spawn((
                 Text::new("Press SPACE to descend"),

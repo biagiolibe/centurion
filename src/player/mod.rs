@@ -69,15 +69,17 @@ fn sync_player_stats(
     }
 }
 
-/// Save player state before exiting a floor, then despawn the player entity.
+/// Save player state before exiting a floor, applying Force tier recovery and +20 steps bonus.
 fn on_enter_rest(
     mut commands: Commands,
     player_q: Query<(Entity, &CurrentSteps, &Force), With<Player>>,
 ) {
     if let Ok((entity, steps, force)) = player_q.single() {
+        let new_force = ((force.0 / 5) + 1) * 5;
+        let new_steps = steps.0 + 20;
         commands.insert_resource(PlayerPersistence {
-            steps: steps.0,
-            force: force.0,
+            steps: new_steps,
+            force: new_force,
         });
         commands.entity(entity).despawn();
     }
