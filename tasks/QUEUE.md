@@ -28,8 +28,8 @@
 
 ### Progression & Closure
 11. `[x]` **CEN-011**: Interazione Uscita e Progressione Piano
-12. `[ ]` **CEN-012**: Schermata Rest
-13. `[ ]` **CEN-013**: Schermata Dead e Statistiche Run
+12. `[x]` **CEN-012**: Schermata Rest
+13. `[x]` **CEN-013**: Schermata Dead e Statistiche Run
 
 ---
 
