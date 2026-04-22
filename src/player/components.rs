@@ -18,3 +18,10 @@ pub struct PlayerStats {
     pub steps: i32,
     pub force: i32,
 }
+
+/// Cross-floor persistence: saves player state when exiting a floor.
+#[derive(Resource, Clone, Copy)]
+pub struct PlayerPersistence {
+    pub steps: i32,
+    pub force: i32,
+}

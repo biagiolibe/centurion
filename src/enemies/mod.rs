@@ -14,7 +14,8 @@ pub struct EnemiesPlugin;
 
 impl Plugin for EnemiesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Room), spawn_enemies);
+        app.add_systems(OnEnter(GameState::Room), spawn_enemies)
+            .add_systems(OnEnter(GameState::Rest), cleanup_enemies);
     }
 }
 
@@ -80,9 +81,15 @@ fn spawn_enemies(
             },
             Transform::from_translation(world_pos.extend(0.5))
                 .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
-            DespawnOnExit(GameState::Room),
+            DespawnOnExit(GameState::Dead),
         ));
 
         info!("Enemy F{} spawned at ({},{})", force, pos.x, pos.y);
+    }
+}
+
+fn cleanup_enemies(mut commands: Commands, enemies: Query<Entity, With<Enemy>>) {
+    for entity in enemies.iter() {
+        commands.entity(entity).despawn();
     }
 }

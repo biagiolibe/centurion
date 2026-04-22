@@ -6,6 +6,7 @@ use crate::player::{Player, CurrentSteps};
 use crate::input::MoveIntent;
 use crate::enemies::Enemy;
 use crate::tactics::CombatIntent;
+use crate::config::CenturionConfig;
 
 pub fn can_move_to(pos: GridPos, layout: &RoomLayout) -> bool {
     layout.get(pos.x, pos.y) != TileKind::Wall
@@ -19,6 +20,7 @@ pub fn apply_movement(
     enemy_q: Query<(Entity, &GridPos), (With<Enemy>, Without<Player>)>,
     mut combat_writer: MessageWriter<CombatIntent>,
     mut next_state: ResMut<NextState<GameState>>,
+    mut config: ResMut<CenturionConfig>,
 ) {
     if *state.get() != GameState::Room {
         return;
@@ -71,6 +73,13 @@ pub fn apply_movement(
         // Morte se passi esauriti
         if steps.0 <= 0 {
             next_state.set(GameState::Dead);
+        }
+
+        // Exit detection
+        if layout.get(new_pos.x, new_pos.y) == TileKind::Exit {
+            config.current_floor += 1;
+            info!("Player reached exit! Advancing to floor {}", config.current_floor);
+            next_state.set(GameState::Rest);
         }
     }
 }

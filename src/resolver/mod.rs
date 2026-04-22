@@ -7,13 +7,17 @@ use crate::tactics::{CombatIntent, MovementSet};
 use crate::map_gen::{GridPos, grid_to_world};
 
 pub mod combat;
+pub mod flash;
 pub use combat::{CombatResult, resolve};
+pub use flash::{FlashPlugin, LastCombatOutcome};
 
 pub struct ResolverPlugin;
 
 impl Plugin for ResolverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, resolve_combat.after(MovementSet));
+        app.init_resource::<LastCombatOutcome>()
+            .add_plugins(FlashPlugin)
+            .add_systems(Update, resolve_combat.after(MovementSet));
     }
 }
 
@@ -23,6 +27,7 @@ fn resolve_combat(
     mut player_q: Query<(&mut Force, &mut GridPos, &mut Transform), (With<Player>, Without<Enemy>)>,
     enemy_q: Query<&EnemyForce, (With<Enemy>, Without<Player>)>,
     mut next_state: ResMut<NextState<GameState>>,
+    mut last_outcome: ResMut<LastCombatOutcome>,
 ) {
     for intent in combat_reader.read() {
         let Ok(enemy_force) = enemy_q.get(intent.defender) else { continue; };
@@ -39,10 +44,13 @@ fn resolve_combat(
                 transform.translation = grid_to_world(intent.target_pos).extend(1.0);
                 commands.entity(intent.defender).despawn();
                 info!("Combat: Player wins! Force {} -> {}", player_force.0 + enemy_force_val, new_force);
+                *last_outcome = LastCombatOutcome::Victory;
+                next_state.set(GameState::CombatEvent);
             }
             CombatResult::PlayerDies => {
                 info!("Combat: Player dies (force {} vs {})!", player_force.0, enemy_force_val);
-                next_state.set(GameState::Dead);
+                *last_outcome = LastCombatOutcome::Defeat;
+                next_state.set(GameState::CombatEvent);
             }
         }
     }

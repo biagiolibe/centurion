@@ -24,10 +24,10 @@
 ### Combat & Entities
 8. `[x]` **CEN-008**: Entità Nemici — Spawn e Comportamento Statico
 9. `[x]` **CEN-009**: Risoluzione Combattimento Deterministico
-10. `[ ]` **CEN-010**: Animazione Flash (bevy_tweening)
+10. `[x]` **CEN-010**: Animazione Flash (bevy_tweening)
 
 ### Progression & Closure
-11. `[ ]` **CEN-011**: Interazione Uscita e Progressione Piano
+11. `[x]` **CEN-011**: Interazione Uscita e Progressione Piano
 12. `[ ]` **CEN-012**: Schermata Rest
 13. `[ ]` **CEN-013**: Schermata Dead e Statistiche Run
 
@@ -46,6 +46,8 @@
 - `[x]` **CEN-007**: Steps Counter HUD
 - `[x]` **CEN-008**: Entità Nemici — Spawn e Comportamento Statico
 - `[x]` **CEN-009**: Risoluzione Combattimento Deterministico
+- `[x]` **CEN-010**: Animazione Flash (manual timer-based, no bevy_tweening)
+- `[x]` **CEN-011**: Interazione Uscita e Progressione Piano
 
 ---
 
@@ -62,4 +64,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-18 — CEN-009 completato*
+*Ultimo aggiornamento: 2026-04-20 — CEN-011 completato*
