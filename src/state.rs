@@ -3,11 +3,11 @@ use bevy::prelude::*;
 /// Game state machine that governs the entire game flow.
 ///
 /// Valid transitions:
-/// - Loading  → Room
-/// - Room     → CombatEvent | Rest | Dead
-/// - CombatEvent → Room
-/// - Rest     → Room
-/// - Dead     → Loading
+/// - Loading     → Room
+/// - Room        → CombatEvent | Rest | Dead
+/// - CombatEvent → Room | Dead
+/// - Rest        → Room
+/// - Dead        → Loading
 ///
 /// PATTERN: Use `DespawnOnExit<GameState>` on all in-game entities.
 /// When exiting a state, Bevy automatically despawns all entities carrying

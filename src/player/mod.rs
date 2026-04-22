@@ -22,7 +22,12 @@ impl Plugin for PlayerPlugin {
 fn spawn_player(
     mut commands: Commands,
     persistence: Option<Res<PlayerPersistence>>,
+    existing: Query<(), With<Player>>,
 ) {
+    if !existing.is_empty() {
+        return;
+    }
+
     let start_pos = GridPos { x: 1, y: 1 };
     let world_pos = grid_to_world(start_pos);
 

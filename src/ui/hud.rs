@@ -16,7 +16,11 @@ pub struct HudForce;
 #[derive(Component)]
 pub struct HudFloor;
 
-pub fn spawn_hud(mut commands: Commands) {
+pub fn spawn_hud(mut commands: Commands, existing: Query<(), With<HudRoot>>) {
+    if !existing.is_empty() {
+        return;
+    }
+
     commands.spawn((
         Node {
             position_type: PositionType::Absolute,

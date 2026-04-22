@@ -47,7 +47,12 @@ fn spawn_enemies(
     mut commands: Commands,
     config: Res<CenturionConfig>,
     layout: Option<Res<RoomLayout>>,
+    existing: Query<(), With<Enemy>>,
 ) {
+    if !existing.is_empty() {
+        return;
+    }
+
     // If RoomLayout not yet inserted, build it ourselves
     let layout_ref = if let Some(layout) = layout {
         layout.into_inner().clone()
