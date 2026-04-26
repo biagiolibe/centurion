@@ -11,8 +11,14 @@ pub struct RestScreenPlugin;
 
 impl Plugin for RestScreenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Rest), spawn_rest_screen)
-            .add_systems(Update, rest_input.run_if(in_state(GameState::Rest)));
+        app.add_systems(
+            Update,
+            (
+                spawn_rest_screen,
+                rest_input,
+            )
+                .run_if(in_state(GameState::Rest)),
+        );
     }
 }
 
@@ -20,11 +26,16 @@ fn spawn_rest_screen(
     mut commands: Commands,
     config: Res<CenturionConfig>,
     persistence: Option<Res<PlayerPersistence>>,
+    existing: Query<(), With<RestScreenRoot>>,
 ) {
+    if !existing.is_empty() {
+        return;
+    }
+
     let floor_cleared = config.current_floor.saturating_sub(1);
     let (steps, force) = persistence
         .as_ref()
-        .map(|p| (p.steps - 20, p.force))  // Show pre-rest force and steps
+        .map(|p| (p.steps, p.force))
         .unwrap_or((0, 0));
 
     let force_after_rest = ((force / 5) + 1) * 5;

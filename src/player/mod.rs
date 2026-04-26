@@ -32,7 +32,7 @@ fn spawn_player(
     let world_pos = grid_to_world(start_pos);
 
     let (steps, force) = match persistence {
-        Some(ref p) => (p.steps, p.force),
+        Some(ref p) => (p.steps + 20, ((p.force / 5) + 1) * 5),
         None => (100, 5),
     };
 
@@ -75,11 +75,9 @@ fn on_enter_rest(
     player_q: Query<(Entity, &CurrentSteps, &Force), With<Player>>,
 ) {
     if let Ok((entity, steps, force)) = player_q.single() {
-        let new_force = ((force.0 / 5) + 1) * 5;
-        let new_steps = steps.0 + 20;
         commands.insert_resource(PlayerPersistence {
-            steps: new_steps,
-            force: new_force,
+            steps: steps.0,
+            force: force.0,
         });
         commands.entity(entity).despawn();
     }
