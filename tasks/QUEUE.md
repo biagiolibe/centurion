@@ -6,7 +6,23 @@
 
 ---
 
-## Milestone: Tactical Core (MVP)
+## Milestone: Gameplay Depth Overhaul (Post-MVP)
+
+### Phase 1: Tactical Positioning — Enemy AI
+14. `[ ]` **CEN-014**: Enemy AI — Movimento Dinamico (Patrol & Guard)
+
+### Phase 2: Run Variety — Procedural Generation
+15. `[ ]` **CEN-015**: Procedural Generation — Seeding e Layout Dinamico
+
+### Phase 3: Resource Management — Items & Rest Choices
+16. `[ ]` **CEN-016**: Items & Rest Choices — Ration, Whetstone, 3 Scelte
+
+### Phase 4: Endgame — Win Condition & Score
+17. `[ ]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System
+
+---
+
+## Milestone: Tactical Core (MVP) ✅ COMPLETATO
 
 ### Core Infrastructure (Foundation & State)
 1. `[x]` **CEN-001**: Foundation — App Bevy, Plugin Architecture, Rendering Geometrico
@@ -64,4 +80,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-20 — CEN-011 completato*
+*Ultimo aggiornamento: 2026-04-28 — Milestone Post-MVP aggiunto (CEN-014 a CEN-017)*

@@ -31,17 +31,20 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ### 🏗️ Architettura & Sistemi Core
 - `[x]` Setup progetto Rust + Bevy (minimal geometric style) — CEN-001
-- `[ ]` Sistema di Turni e risorsa globale `Steps`
+- `[x]` Sistema di Turni e risorsa globale `Steps` — CEN-002
 - `[x]` Generatore di stanze 8x8 deterministico — CEN-003
 
 ### 🗺️ Mondo & Generazione
-- `[ ]` Algoritmo di distribuzione entità (Nemici, Consumabili, Uscita)
-- `[ ]` Progression piano dopo piano con incremento difficoltà
+- `[x]` Algoritmo di distribuzione entità (Nemici, Consumabili, Uscita) — CEN-004 a CEN-013
+- `[ ]` **Fase 1: Enemy AI — Movimento dinamico (Patrol & Guard)** — CEN-014
+- `[ ]` **Fase 2: Procedural Generation — Varietà tra run e seeding** — CEN-015
+- `[ ]` **Fase 3: Items & Rest Choices — Resource Management** — CEN-016
+- `[ ]` **Fase 4: Endgame & Win Condition — Score System** — CEN-017
 
-### 🤖 Entità & Meccaniche
-- `[ ]` Movimento giocatore (1 passo = -1 Step)
-- `[ ]` Combattimento deterministico (Sottrazione Forza/HP)
-- `[ ]` Feedback visivo "Flash" quando si colpisce o si viene colpiti
+### 🤖 Entità & Meccaniche (MVP ✅)
+- `[x]` Movimento giocatore (1 passo = -1 Step)
+- `[x]` Combattimento deterministico (Sottrazione Forza/HP)
+- `[x]` Feedback visivo "Flash" quando si colpisce o si viene colpiti
 
 ---
 
@@ -55,4 +58,4 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ---
 
-*Ultimo aggiornamento: 2026-04-16*
+*Ultimo aggiornamento: 2026-04-28*
