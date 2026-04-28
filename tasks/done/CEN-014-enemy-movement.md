@@ -1,6 +1,6 @@
 # CEN-014: Enemy AI — Movimento Dinamico (Patrol & Guard)
 
-**Status**: [ ] Approvato | [/] In Lavorazione | [x] Completato
+**Status**: [x] Completato
 
 **Dipendenze**: CEN-013 (Schermata Dead)
 
@@ -233,4 +233,73 @@ vec![
 
 ---
 
-*Versione: 1.0 | Creato: 2026-04-28*
+---
+
+## 🐛 Problema Riscontrato: ECS Query Conflict B0001
+
+### Descrizione
+
+Dopo l'implementazione iniziale, il gioco crashava al lancio con:
+
+```
+error[B0001]: Query accesses component(s) in a way that conflicts with a previous system parameter
+```
+
+Il sistema `advance_enemies` era stato commentato per permettere al gioco di avviarsi.
+
+### Causa Radice
+
+Conflitto tra due sistemi in `Update`, entrambi schedulati `.after(MovementSet)` senza ordinamento reciproco:
+
+| Sistema | Componente | Entità | Accesso |
+|---|---|---|---|
+| `advance_enemies` | `GridPos` | Player | **immutabile** (`&GridPos`) |
+| `apply_victory_movement` | `GridPos` | Player | **mutabile** (`&mut GridPos`) |
+
+Bevy non può garantire che i due sistemi non girino in concorrenza, quindi rileva il conflitto a tempo di inizializzazione.
+
+**Nota**: Aggiungere ordering esplicito (`.after(apply_victory_movement)`) non risolve il problema perché Bevy verifica i conflitti di accesso ai componenti indipendentemente dall'ordering — anche sistemi sequenziali non possono avere query in conflitto sulle stesse entità.
+
+### Soluzione Applicata
+
+Introdotta la risorsa `CurrentPlayerPos` in `src/resolver/mod.rs`:
+
+```rust
+#[derive(Resource, Copy, Clone)]
+pub struct CurrentPlayerPos(pub GridPos);
+```
+
+Un sistema `sync_player_pos` la aggiorna ogni frame dopo `MovementSet`:
+
+```rust
+fn sync_player_pos(
+    player_q: Query<&GridPos, With<Player>>,
+    mut current_pos: ResMut<CurrentPlayerPos>,
+) {
+    if let Ok(pos) = player_q.single() {
+        current_pos.0 = *pos;
+    }
+}
+```
+
+`advance_enemies` ora legge la posizione del player da questa risorsa invece che da una query diretta sul componente:
+
+```rust
+pub fn advance_enemies(
+    player_q: Query<Entity, With<Player>>,  // solo Entity, nessun GridPos
+    player_pos: Res<crate::resolver::CurrentPlayerPos>,
+    ...
+)
+```
+
+Risultato: nessuna query in `advance_enemies` accede a `GridPos` sul Player → conflitto eliminato.
+
+### File Modificati
+
+- `src/resolver/mod.rs` — aggiunta risorsa `CurrentPlayerPos`, sistema `sync_player_pos`
+- `src/enemies/movement.rs` — `advance_enemies` usa `Res<CurrentPlayerPos>` invece di `Query<&GridPos, With<Player>>`
+- `src/enemies/mod.rs` — sistema `advance_enemies` riabilitato
+
+---
+
+*Versione: 1.1 | Creato: 2026-04-28 | Fix B0001: 2026-04-28*

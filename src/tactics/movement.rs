@@ -5,7 +5,7 @@ use crate::map_gen::{GridPos, TileKind, RoomLayout, grid_to_world};
 use crate::player::{Player, CurrentSteps};
 use crate::input::MoveIntent;
 use crate::enemies::Enemy;
-use crate::tactics::CombatIntent;
+use crate::tactics::{CombatIntent, TurnPending};
 use crate::config::CenturionConfig;
 
 pub fn can_move_to(pos: GridPos, layout: &RoomLayout) -> bool {
@@ -21,6 +21,7 @@ pub fn apply_movement(
     mut combat_writer: MessageWriter<CombatIntent>,
     mut next_state: ResMut<NextState<GameState>>,
     mut config: ResMut<CenturionConfig>,
+    mut turn_pending: ResMut<TurnPending>,
 ) {
     if *state.get() != GameState::Room {
         return;
@@ -59,7 +60,7 @@ pub fn apply_movement(
                 defender: enemy_entity,
                 target_pos: new_pos,
             });
-            // Combat non consuma passi — continue
+            turn_pending.0 = true;
             continue;
         }
 
@@ -67,6 +68,7 @@ pub fn apply_movement(
         *grid_pos = new_pos;
         transform.translation = grid_to_world(new_pos).extend(1.0);
         steps.0 -= 1;
+        turn_pending.0 = true;
 
         info!("Player moved to ({}, {}), steps remaining: {}", new_pos.x, new_pos.y, steps.0);
 

@@ -9,7 +9,7 @@
 ## Milestone: Gameplay Depth Overhaul (Post-MVP)
 
 ### Phase 1: Tactical Positioning — Enemy AI
-14. `[ ]` **CEN-014**: Enemy AI — Movimento Dinamico (Patrol & Guard)
+14. `[x]` **CEN-014**: Enemy AI — Movimento Dinamico (Patrol & Guard)
 
 ### Phase 2: Run Variety — Procedural Generation
 15. `[ ]` **CEN-015**: Procedural Generation — Seeding e Layout Dinamico

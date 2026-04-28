@@ -5,39 +5,50 @@ use crate::config::CenturionConfig;
 use crate::map_gen::{GridPos, TileKind, RoomLayout, grid_to_world, TILE_SIZE};
 
 pub mod components;
-pub use components::{Enemy, EnemyForce, EnemyBehavior};
+pub mod movement;
+
+pub use components::{Enemy, EnemyForce, EnemyBehavior, EnemyDef, Axis};
+pub use movement::advance_enemies;
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct EnemySpawn;
+
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct EnemyTurnSet;
 
 pub struct EnemiesPlugin;
 
 impl Plugin for EnemiesPlugin {
     fn build(&self, app: &mut App) {
+        use crate::resolver::apply_victory_movement;
+
         app.add_systems(OnEnter(GameState::Room), spawn_enemies)
-            .add_systems(OnEnter(GameState::Rest), cleanup_enemies);
+            .add_systems(OnEnter(GameState::Rest), cleanup_enemies)
+            .add_systems(Update, advance_enemies
+                .after(apply_victory_movement)
+                .run_if(in_state(GameState::Room)));
     }
 }
 
-fn enemy_positions(floor: u8) -> Vec<(GridPos, i32)> {
+fn enemy_positions(floor: u8) -> Vec<EnemyDef> {
     match floor {
         1 => vec![
-            (GridPos { x: 3, y: 3 }, 3),
-            (GridPos { x: 5, y: 5 }, 7),
-            (GridPos { x: 6, y: 3 }, 4),
+            EnemyDef { pos: GridPos { x: 3, y: 3 }, force: 3, behavior: EnemyBehavior::Guard { alerted: false } },
+            EnemyDef { pos: GridPos { x: 5, y: 5 }, force: 7, behavior: EnemyBehavior::Static },
+            EnemyDef { pos: GridPos { x: 6, y: 3 }, force: 4, behavior: EnemyBehavior::Static },
         ],
         2 => vec![
-            (GridPos { x: 2, y: 2 }, 4),
-            (GridPos { x: 5, y: 5 }, 9),
-            (GridPos { x: 6, y: 3 }, 6),
-            (GridPos { x: 3, y: 6 }, 5),
+            EnemyDef { pos: GridPos { x: 2, y: 2 }, force: 4, behavior: EnemyBehavior::Patrol { axis: Axis::Horizontal, direction: 1 } },
+            EnemyDef { pos: GridPos { x: 5, y: 5 }, force: 9, behavior: EnemyBehavior::Guard { alerted: false } },
+            EnemyDef { pos: GridPos { x: 6, y: 3 }, force: 6, behavior: EnemyBehavior::Static },
+            EnemyDef { pos: GridPos { x: 3, y: 6 }, force: 5, behavior: EnemyBehavior::Static },
         ],
         _ => {
             let base = 2 + floor as i32;
             vec![
-                (GridPos { x: 2, y: 2 }, base + 1),
-                (GridPos { x: 5, y: 5 }, base + 4),
-                (GridPos { x: 6, y: 3 }, base + 2),
+                EnemyDef { pos: GridPos { x: 2, y: 2 }, force: base + 1, behavior: EnemyBehavior::Patrol { axis: Axis::Vertical, direction: 1 } },
+                EnemyDef { pos: GridPos { x: 5, y: 5 }, force: base + 4, behavior: EnemyBehavior::Guard { alerted: false } },
+                EnemyDef { pos: GridPos { x: 6, y: 3 }, force: base + 2, behavior: EnemyBehavior::Static },
             ]
         }
     }
@@ -62,24 +73,30 @@ fn spawn_enemies(
 
     let player_spawn = GridPos { x: 1, y: 1 };
 
-    for (pos, force) in enemy_positions(config.current_floor) {
+    for def in enemy_positions(config.current_floor) {
         // Validation: skip wall, skip player spawn, skip exit
-        let tile = layout_ref.get(pos.x, pos.y);
+        let tile = layout_ref.get(def.pos.x, def.pos.y);
         if tile == TileKind::Wall || tile == TileKind::Exit {
-            warn!("Enemy at ({},{}) skipped: invalid tile", pos.x, pos.y);
+            warn!("Enemy at ({},{}) skipped: invalid tile", def.pos.x, def.pos.y);
             continue;
         }
-        if pos.x == player_spawn.x && pos.y == player_spawn.y {
-            warn!("Enemy at ({},{}) skipped: player spawn", pos.x, pos.y);
+        if def.pos.x == player_spawn.x && def.pos.y == player_spawn.y {
+            warn!("Enemy at ({},{}) skipped: player spawn", def.pos.x, def.pos.y);
             continue;
         }
 
-        let world_pos = grid_to_world(pos);
+        let world_pos = grid_to_world(def.pos);
+        let behavior_name = match def.behavior {
+            EnemyBehavior::Static => "Static",
+            EnemyBehavior::Patrol { .. } => "Patrol",
+            EnemyBehavior::Guard { .. } => "Guard",
+        };
+
         commands.spawn((
             Enemy,
-            EnemyForce(force),
-            EnemyBehavior::Static,
-            pos,
+            EnemyForce(def.force),
+            def.behavior,
+            def.pos,
             Sprite {
                 color: Color::srgb(0.7, 0.3, 0.3),
                 ..default()
@@ -89,7 +106,7 @@ fn spawn_enemies(
             DespawnOnExit(GameState::Dead),
         ));
 
-        info!("Enemy F{} spawned at ({},{})", force, pos.x, pos.y);
+        info!("Enemy F{} ({}) spawned at ({},{})", def.force, behavior_name, def.pos.x, def.pos.y);
     }
 }
 

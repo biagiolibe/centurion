@@ -36,7 +36,7 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ### 🗺️ Mondo & Generazione
 - `[x]` Algoritmo di distribuzione entità (Nemici, Consumabili, Uscita) — CEN-004 a CEN-013
-- `[ ]` **Fase 1: Enemy AI — Movimento dinamico (Patrol & Guard)** — CEN-014
+- `[x]` **Fase 1: Enemy AI — Movimento dinamico (Patrol & Guard)** — CEN-014
 - `[ ]` **Fase 2: Procedural Generation — Varietà tra run e seeding** — CEN-015
 - `[ ]` **Fase 3: Items & Rest Choices — Resource Management** — CEN-016
 - `[ ]` **Fase 4: Endgame & Win Condition — Score System** — CEN-017

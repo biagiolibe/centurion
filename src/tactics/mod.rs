@@ -14,11 +14,15 @@ pub struct CombatIntent {
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MovementSet;
 
+#[derive(Resource, Default)]
+pub struct TurnPending(pub bool);
+
 pub struct TacticsPlugin;
 
 impl Plugin for TacticsPlugin {
     fn build(&self, app: &mut App) {
         app.add_message::<CombatIntent>()
+            .init_resource::<TurnPending>()
             .add_systems(Update, apply_movement.in_set(MovementSet));
     }
 }
