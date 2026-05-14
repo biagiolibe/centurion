@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 use bevy::ecs::message::MessageReader;
-use std::collections::HashMap;
 use crate::state::GameState;
 use crate::player::{Player, Force};
-use crate::enemies::{Enemy, EnemyForce, EnemySpawn};
+use crate::enemies::{Enemy, EnemyForce};
 use crate::tactics::MovementSet;
 use crate::tactics::CombatIntent;
 use crate::map_gen::{GridPos, grid_to_world};
@@ -12,9 +11,6 @@ pub mod combat;
 pub mod flash;
 pub use combat::{CombatResult, resolve};
 pub use flash::{FlashPlugin, LastCombatOutcome};
-
-#[derive(Resource, Default)]
-pub struct EnemyForcesMap(pub HashMap<Entity, i32>);
 
 #[derive(Resource, Default)]
 pub struct PendingPlayerVictory {
@@ -38,26 +34,14 @@ pub struct ResolverPlugin;
 impl Plugin for ResolverPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<LastCombatOutcome>()
-            .init_resource::<EnemyForcesMap>()
             .init_resource::<PendingPlayerVictory>()
             .init_resource::<CurrentPlayerForce>()
             .init_resource::<CurrentPlayerPos>()
             .add_plugins(FlashPlugin)
-            .add_systems(OnEnter(GameState::Room), cache_enemy_forces.after(EnemySpawn))
             .add_systems(Update, (sync_player_force, sync_player_pos).after(MovementSet))
             .add_systems(Update, (resolve_combat, apply_victory_movement)
                 .chain()
                 .after(MovementSet));
-    }
-}
-
-fn cache_enemy_forces(
-    enemy_q: Query<(Entity, &EnemyForce), With<Enemy>>,
-    mut forces_map: ResMut<EnemyForcesMap>,
-) {
-    forces_map.0.clear();
-    for (entity, force) in &enemy_q {
-        forces_map.0.insert(entity, force.0);
     }
 }
 
@@ -83,7 +67,7 @@ fn resolve_combat(
     mut commands: Commands,
     mut combat_reader: MessageReader<CombatIntent>,
     mut player_q: Query<(Entity, &mut Force), With<Player>>,
-    forces_map: Res<EnemyForcesMap>,
+    enemy_force_q: Query<&EnemyForce, With<Enemy>>,
     current_force: Res<CurrentPlayerForce>,
     mut victory: ResMut<PendingPlayerVictory>,
     mut next_state: ResMut<NextState<GameState>>,
@@ -98,13 +82,10 @@ fn resolve_combat(
 
         let player_force_val = current_force.0;
 
-        // Phase 2: Determine who's attacking and get enemy force
+        // Phase 2: Determine who's attacking and get enemy force directly from component
         let attacker_is_player = intent.attacker == player_entity;
-        let enemy_force_val = if attacker_is_player {
-            forces_map.0.get(&intent.defender).copied().unwrap_or(0)
-        } else {
-            forces_map.0.get(&intent.attacker).copied().unwrap_or(0)
-        };
+        let enemy_entity = if attacker_is_player { intent.defender } else { intent.attacker };
+        let enemy_force_val = enemy_force_q.get(enemy_entity).map(|f| f.0).unwrap_or(0);
 
         // Phase 3: Resolve combat and determine outcome
         let outcome = if attacker_is_player {
