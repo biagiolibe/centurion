@@ -1,24 +1,35 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::CenturionConfig;
+use crate::config::{CenturionConfig, RunSeed};
 
 pub mod room;
+pub mod procgen;
 pub use room::{GridPos, TileKind, RoomLayout, build_room, grid_to_world, world_to_grid, TILE_SIZE};
+pub use procgen::{build_room_proc, generate_enemy_defs};
+
+#[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MapGenSet;
+
+#[derive(Resource, Clone, Copy, Debug)]
+pub struct CurrentExitPos(pub GridPos);
 
 pub struct MapGenPlugin;
 
 impl Plugin for MapGenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Room), spawn_room);
+        app.add_systems(OnEnter(GameState::Room), spawn_room.in_set(MapGenSet));
     }
 }
 
 /// Spawn all tiles for the current room.
 /// This system runs when entering Room state and creates a 8x8 grid of tile entities.
-fn spawn_room(mut commands: Commands, config: Res<CenturionConfig>) {
-    // Generate room layout for current floor
-    let room_layout = build_room(config.current_floor);
+fn spawn_room(mut commands: Commands, config: Res<CenturionConfig>, run_seed: Res<RunSeed>) {
+    // Generate room layout procedurally for current floor
+    let (room_layout, exit_pos) = build_room_proc(config.current_floor, run_seed.0);
+
+    // Insert exit position for enemies to use
+    commands.insert_resource(CurrentExitPos(exit_pos));
 
     // Spawn all tiles
     for y in 0..8 {
@@ -52,8 +63,7 @@ fn spawn_room(mut commands: Commands, config: Res<CenturionConfig>) {
     commands.insert_resource(room_layout);
 
     info!(
-        "Spawned 8x8 room for floor {} with exit at (4, {})",
-        config.current_floor,
-        4 + ((config.current_floor - 1) % 3)
+        "Spawned 8x8 room for floor {} with exit at ({}, {})",
+        config.current_floor, exit_pos.x, exit_pos.y
     );
 }

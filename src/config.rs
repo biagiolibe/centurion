@@ -16,3 +16,6 @@ impl Default for CenturionConfig {
         }
     }
 }
+
+#[derive(Resource, Clone, Copy, Debug)]
+pub struct RunSeed(pub u64);

@@ -6,7 +6,7 @@ pub const GRID_HEIGHT: u8 = 8;
 
 /// Position on the game grid (0..8 on both axes).
 /// Grid origin (0,0) is top-left; X increases right, Y increases down (standard grid convention).
-#[derive(Component, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Component, Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct GridPos {
     pub x: u8,
     pub y: u8,
@@ -31,6 +31,11 @@ pub struct RoomLayout {
 }
 
 impl RoomLayout {
+    /// Construct a RoomLayout from a raw tile grid.
+    pub fn new(tiles: [[TileKind; 8]; 8]) -> Self {
+        Self { tiles }
+    }
+
     /// Get the tile type at grid position (x, y).
     /// Returns Floor if out of bounds (defensive).
     pub fn get(&self, x: u8, y: u8) -> TileKind {
@@ -38,6 +43,13 @@ impl RoomLayout {
             self.tiles[y as usize][x as usize]
         } else {
             TileKind::Floor
+        }
+    }
+
+    /// Set a specific tile (used by procgen for pillar placement).
+    pub fn set(&mut self, x: u8, y: u8, kind: TileKind) {
+        if x < GRID_WIDTH && y < GRID_HEIGHT {
+            self.tiles[y as usize][x as usize] = kind;
         }
     }
 }

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::CenturionConfig;
+use crate::config::{CenturionConfig, RunSeed};
 use crate::player::{Player, CurrentSteps, Force, PlayerPersistence};
 use crate::resolver::LastCombatOutcome;
 
@@ -64,7 +64,7 @@ fn populate_run_stats(
     });
 }
 
-fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>) {
+fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>, run_seed: Res<RunSeed>) {
     let cause_text = match stats.cause {
         DeathCause::OutOfSteps => "Cause: Out of steps".to_string(),
         DeathCause::KilledByEnemy => "Cause: Killed by enemy".to_string(),
@@ -111,6 +111,11 @@ fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>) {
                 TextColor(Color::WHITE),
             ));
             parent.spawn((
+                Text::new(format!("Seed: 0x{:016x}", run_seed.0)),
+                TextFont { font_size: 18.0, ..default() },
+                TextColor(Color::srgb(0.5, 0.5, 0.5)),
+            ));
+            parent.spawn((
                 Text::new("Press R to restart"),
                 TextFont { font_size: 20.0, ..default() },
                 TextColor(Color::srgb(0.7, 0.7, 0.7)),
@@ -127,6 +132,7 @@ fn dead_input(
     if input.just_pressed(KeyCode::KeyR) {
         config.current_floor = 1;
         commands.remove_resource::<PlayerPersistence>();
+        commands.remove_resource::<RunSeed>();
         next_state.set(GameState::Loading);
     }
 }

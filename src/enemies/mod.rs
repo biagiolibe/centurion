@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::CenturionConfig;
-use crate::map_gen::{GridPos, TileKind, RoomLayout, grid_to_world, TILE_SIZE};
+use crate::config::{CenturionConfig, RunSeed};
+use crate::map_gen::{RoomLayout, grid_to_world, TILE_SIZE, MapGenSet, CurrentExitPos, build_room_proc, generate_enemy_defs};
 
 pub mod components;
 pub mod movement;
@@ -22,7 +22,8 @@ impl Plugin for EnemiesPlugin {
     fn build(&self, app: &mut App) {
         use crate::resolver::apply_victory_movement;
 
-        app.add_systems(OnEnter(GameState::Room), spawn_enemies)
+        app.configure_sets(OnEnter(GameState::Room), EnemySpawn.after(MapGenSet))
+            .add_systems(OnEnter(GameState::Room), spawn_enemies.in_set(EnemySpawn))
             .add_systems(OnEnter(GameState::Rest), cleanup_enemies)
             .add_systems(Update, advance_enemies
                 .after(apply_victory_movement)
@@ -30,34 +31,12 @@ impl Plugin for EnemiesPlugin {
     }
 }
 
-fn enemy_positions(floor: u8) -> Vec<EnemyDef> {
-    match floor {
-        1 => vec![
-            EnemyDef { pos: GridPos { x: 3, y: 3 }, force: 3, behavior: EnemyBehavior::Guard { alerted: false } },
-            EnemyDef { pos: GridPos { x: 5, y: 5 }, force: 7, behavior: EnemyBehavior::Static },
-            EnemyDef { pos: GridPos { x: 6, y: 3 }, force: 4, behavior: EnemyBehavior::Static },
-        ],
-        2 => vec![
-            EnemyDef { pos: GridPos { x: 2, y: 2 }, force: 4, behavior: EnemyBehavior::Patrol { axis: Axis::Horizontal, direction: 1 } },
-            EnemyDef { pos: GridPos { x: 5, y: 5 }, force: 9, behavior: EnemyBehavior::Guard { alerted: false } },
-            EnemyDef { pos: GridPos { x: 6, y: 3 }, force: 6, behavior: EnemyBehavior::Static },
-            EnemyDef { pos: GridPos { x: 3, y: 6 }, force: 5, behavior: EnemyBehavior::Static },
-        ],
-        _ => {
-            let base = 2 + floor as i32;
-            vec![
-                EnemyDef { pos: GridPos { x: 2, y: 2 }, force: base + 1, behavior: EnemyBehavior::Patrol { axis: Axis::Vertical, direction: 1 } },
-                EnemyDef { pos: GridPos { x: 5, y: 5 }, force: base + 4, behavior: EnemyBehavior::Guard { alerted: false } },
-                EnemyDef { pos: GridPos { x: 6, y: 3 }, force: base + 2, behavior: EnemyBehavior::Static },
-            ]
-        }
-    }
-}
-
 fn spawn_enemies(
     mut commands: Commands,
     config: Res<CenturionConfig>,
+    run_seed: Res<RunSeed>,
     layout: Option<Res<RoomLayout>>,
+    exit_pos_res: Option<Res<CurrentExitPos>>,
     existing: Query<(), With<Enemy>>,
 ) {
     if !existing.is_empty() {
@@ -68,23 +47,23 @@ fn spawn_enemies(
     let layout_ref = if let Some(layout) = layout {
         layout.into_inner().clone()
     } else {
-        crate::map_gen::build_room(config.current_floor)
+        let (layout, _) = build_room_proc(config.current_floor, run_seed.0);
+        layout
     };
 
-    let player_spawn = GridPos { x: 1, y: 1 };
-
-    for def in enemy_positions(config.current_floor) {
-        // Validation: skip wall, skip player spawn, skip exit
-        let tile = layout_ref.get(def.pos.x, def.pos.y);
-        if tile == TileKind::Wall || tile == TileKind::Exit {
-            warn!("Enemy at ({},{}) skipped: invalid tile", def.pos.x, def.pos.y);
-            continue;
+    // Get exit position; fallback to re-derive if somehow missing (defensive)
+    let exit_pos = match exit_pos_res {
+        Some(r) => r.0,
+        None => {
+            let (_, ep) = build_room_proc(config.current_floor, run_seed.0);
+            ep
         }
-        if def.pos.x == player_spawn.x && def.pos.y == player_spawn.y {
-            warn!("Enemy at ({},{}) skipped: player spawn", def.pos.x, def.pos.y);
-            continue;
-        }
+    };
 
+    // Generate enemies procedurally
+    let defs = generate_enemy_defs(config.current_floor, run_seed.0, &layout_ref, exit_pos);
+
+    for def in defs {
         let world_pos = grid_to_world(def.pos);
         let behavior_name = match def.behavior {
             EnemyBehavior::Static => "Static",
@@ -103,7 +82,7 @@ fn spawn_enemies(
             },
             Transform::from_translation(world_pos.extend(0.5))
                 .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
-            DespawnOnExit(GameState::Dead),
+            DespawnOnExit(GameState::Room),
         ));
 
         info!("Enemy F{} ({}) spawned at ({},{})", def.force, behavior_name, def.pos.x, def.pos.y);
