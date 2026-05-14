@@ -3,7 +3,7 @@ use bevy::ecs::message::MessageReader;
 use std::collections::HashMap;
 use crate::state::GameState;
 use crate::player::{Player, Force};
-use crate::enemies::{Enemy, EnemyForce};
+use crate::enemies::{Enemy, EnemyForce, EnemySpawn};
 use crate::tactics::MovementSet;
 use crate::tactics::CombatIntent;
 use crate::map_gen::{GridPos, grid_to_world};
@@ -43,7 +43,7 @@ impl Plugin for ResolverPlugin {
             .init_resource::<CurrentPlayerForce>()
             .init_resource::<CurrentPlayerPos>()
             .add_plugins(FlashPlugin)
-            .add_systems(OnEnter(GameState::Room), cache_enemy_forces)
+            .add_systems(OnEnter(GameState::Room), cache_enemy_forces.after(EnemySpawn))
             .add_systems(Update, (sync_player_force, sync_player_pos).after(MovementSet))
             .add_systems(Update, (resolve_combat, apply_victory_movement)
                 .chain()

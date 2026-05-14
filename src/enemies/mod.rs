@@ -82,7 +82,7 @@ fn spawn_enemies(
             },
             Transform::from_translation(world_pos.extend(0.5))
                 .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
-            DespawnOnExit(GameState::Room),
+            DespawnOnExit(GameState::Dead),
         ));
 
         info!("Enemy F{} ({}) spawned at ({},{})", def.force, behavior_name, def.pos.x, def.pos.y);
