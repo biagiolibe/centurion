@@ -7,17 +7,20 @@ use crate::input::MoveIntent;
 use crate::enemies::Enemy;
 use crate::tactics::{CombatIntent, TurnPending};
 use crate::config::CenturionConfig;
+use crate::items::{Item, ItemKind, HeldItem};
 
 pub fn can_move_to(pos: GridPos, layout: &RoomLayout) -> bool {
     layout.get(pos.x, pos.y) != TileKind::Wall
 }
 
 pub fn apply_movement(
+    mut commands: Commands,
     state: Res<State<GameState>>,
     mut move_reader: MessageReader<MoveIntent>,
     mut player_q: Query<(Entity, &mut GridPos, &mut Transform, &mut CurrentSteps), (With<Player>, Without<Enemy>)>,
     layout: Res<RoomLayout>,
     enemy_q: Query<(Entity, &GridPos), (With<Enemy>, Without<Player>)>,
+    item_q: Query<(Entity, &GridPos, &ItemKind), (With<Item>, Without<Player>, Without<Enemy>)>,
     mut combat_writer: MessageWriter<CombatIntent>,
     mut next_state: ResMut<NextState<GameState>>,
     mut config: ResMut<CenturionConfig>,
@@ -71,6 +74,21 @@ pub fn apply_movement(
         turn_pending.0 = true;
 
         info!("Player moved to ({}, {}), steps remaining: {}", new_pos.x, new_pos.y, steps.0);
+
+        // Item pickup
+        if let Some((item_entity, _, kind)) = item_q.iter().find(|(_, p, _)| **p == new_pos) {
+            match *kind {
+                ItemKind::Ration => {
+                    steps.0 += 10;
+                    info!("Picked up Ration! Steps now: {}", steps.0);
+                }
+                ItemKind::Whetstone => {
+                    commands.entity(player_entity).insert(HeldItem(*kind));
+                    info!("Picked up Whetstone! Holding for rest bonus.");
+                }
+            }
+            commands.entity(item_entity).despawn();
+        }
 
         // Morte se passi esauriti
         if steps.0 <= 0 {

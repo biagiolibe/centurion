@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::items::ItemKind;
 
 /// Tag component for the player entity.
 #[derive(Component)]
@@ -24,4 +25,5 @@ pub struct PlayerStats {
 pub struct PlayerPersistence {
     pub steps: i32,
     pub force: i32,
+    pub held_item: Option<ItemKind>,
 }

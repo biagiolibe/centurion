@@ -20,15 +20,6 @@ pub struct PendingPlayerVictory {
 #[derive(Resource, Default)]
 pub struct CurrentPlayerForce(pub i32);
 
-#[derive(Resource, Copy, Clone)]
-pub struct CurrentPlayerPos(pub GridPos);
-
-impl Default for CurrentPlayerPos {
-    fn default() -> Self {
-        Self(GridPos { x: 0, y: 0 })
-    }
-}
-
 pub struct ResolverPlugin;
 
 impl Plugin for ResolverPlugin {
@@ -36,9 +27,8 @@ impl Plugin for ResolverPlugin {
         app.init_resource::<LastCombatOutcome>()
             .init_resource::<PendingPlayerVictory>()
             .init_resource::<CurrentPlayerForce>()
-            .init_resource::<CurrentPlayerPos>()
             .add_plugins(FlashPlugin)
-            .add_systems(Update, (sync_player_force, sync_player_pos).after(MovementSet))
+            .add_systems(Update, sync_player_force.after(MovementSet))
             .add_systems(Update, (resolve_combat, apply_victory_movement)
                 .chain()
                 .after(MovementSet));
@@ -51,15 +41,6 @@ fn sync_player_force(
 ) {
     if let Ok(force) = player_q.single() {
         current_force.0 = force.0;
-    }
-}
-
-fn sync_player_pos(
-    player_q: Query<&GridPos, With<Player>>,
-    mut current_pos: ResMut<CurrentPlayerPos>,
-) {
-    if let Ok(pos) = player_q.single() {
-        current_pos.0 = *pos;
     }
 }
 
@@ -122,8 +103,13 @@ fn resolve_combat(
                     next_state.set(GameState::CombatEvent);
                 }
                 CombatResult::PlayerDies => {
+                    let new_force = player_force_val - enemy_force_val;
+                    let mut iter = player_q.iter_mut();
+                    if let Some((_, mut pf)) = iter.next() {
+                        pf.0 = new_force;
+                    }
                     commands.entity(intent.attacker).despawn();
-                    info!("Combat: Player defeats advancing enemy! Force preserved at {}", player_force_val);
+                    info!("Combat: Player defeats advancing enemy! Force {} -> {}", player_force_val, new_force);
                     *last_outcome = LastCombatOutcome::Victory;
                     next_state.set(GameState::CombatEvent);
                 }

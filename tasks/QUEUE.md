@@ -12,10 +12,10 @@
 14. `[x]` **CEN-014**: Enemy AI — Movimento Dinamico (Patrol & Guard)
 
 ### Phase 2: Run Variety — Procedural Generation
-15. `[ ]` **CEN-015**: Procedural Generation — Seeding e Layout Dinamico
+15. `[x]` **CEN-015**: Procedural Generation — Seeding e Layout Dinamico
 
 ### Phase 3: Resource Management — Items & Rest Choices
-16. `[ ]` **CEN-016**: Items & Rest Choices — Ration, Whetstone, 3 Scelte
+16. `[x]` **CEN-016**: Items & Rest Choices — Ration, Whetstone, 3 Scelte
 
 ### Phase 4: Endgame — Win Condition & Score
 17. `[ ]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System

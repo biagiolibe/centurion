@@ -6,10 +6,9 @@ use crate::tactics::CombatIntent;
 use super::components::{Enemy, EnemyBehavior, Axis};
 
 pub fn advance_enemies(
-    player_q: Query<Entity, With<Player>>,
-    mut enemy_q: Query<(Entity, &mut GridPos, &mut EnemyBehavior, &mut Transform), With<Enemy>>,
+    player_q: Query<(Entity, &GridPos), (With<Player>, Without<Enemy>)>,
+    mut enemy_q: Query<(Entity, &mut GridPos, &mut EnemyBehavior, &mut Transform), (With<Enemy>, Without<Player>)>,
     layout: Res<RoomLayout>,
-    player_pos: Res<crate::resolver::CurrentPlayerPos>,
     mut combat_writer: MessageWriter<CombatIntent>,
     mut turn_pending: ResMut<crate::tactics::TurnPending>,
 ) {
@@ -18,17 +17,15 @@ pub fn advance_enemies(
     }
     turn_pending.0 = false;
 
-    let Ok(player_entity) = player_q.single() else {
+    let Ok((player_entity, player_grid_pos)) = player_q.single() else {
         return;
     };
 
-    let player_grid_pos = player_pos.0;
-
     for (enemy_entity, mut enemy_pos, mut behavior, mut transform) in &mut enemy_q {
-        let (target, new_behavior) = compute_enemy_move(&enemy_pos, *behavior, &player_grid_pos, &layout);
+        let (target, new_behavior) = compute_enemy_move(&enemy_pos, *behavior, player_grid_pos, &layout);
         *behavior = new_behavior;
 
-        if target == player_grid_pos {
+        if target == *player_grid_pos {
             combat_writer.write(CombatIntent {
                 attacker: enemy_entity,
                 defender: player_entity,

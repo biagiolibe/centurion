@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::app::PluginGroupBuilder;
 use crate::enemies::EnemiesPlugin;
 use crate::input::InputPlugin;
+use crate::items::ItemsPlugin;
 use crate::rendering::CenturionRenderPlugin;
 use crate::resolver::ResolverPlugin;
 use crate::config::CenturionConfig;
@@ -25,6 +26,7 @@ impl PluginGroup for CenturionPlugins {
             .add(InputPlugin)
             .add(TacticsPlugin)
             .add(EnemiesPlugin)
+            .add(ItemsPlugin)
             .add(ResolverPlugin)
             .add(HudPlugin)
     }

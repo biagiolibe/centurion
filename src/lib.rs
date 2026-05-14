@@ -1,6 +1,7 @@
 pub mod config;
 pub mod enemies;
 pub mod input;
+pub mod items;
 pub mod plugins;
 pub mod rendering;
 pub mod resolver;

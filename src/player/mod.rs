@@ -6,6 +6,7 @@ pub use components::{Player, CurrentSteps, Force, PlayerStats, PlayerPersistence
 
 use crate::state::GameState;
 use crate::map_gen::{GridPos, grid_to_world, TILE_SIZE};
+use crate::items::HeldItem;
 
 pub struct PlayerPlugin;
 
@@ -31,12 +32,12 @@ fn spawn_player(
     let start_pos = GridPos { x: 1, y: 1 };
     let world_pos = grid_to_world(start_pos);
 
-    let (steps, force) = match persistence {
-        Some(ref p) => (p.steps + 20, ((p.force / 5) + 1) * 5),
-        None => (100, 5),
+    let (steps, force, held_item_opt) = match persistence {
+        Some(ref p) => (p.steps, p.force, p.held_item),
+        None => (100, 5, None),
     };
 
-    commands.spawn((
+    let player_id = commands.spawn((
         Player,
         CurrentSteps(steps),
         Force(force),
@@ -48,7 +49,11 @@ fn spawn_player(
         Transform::from_translation(world_pos.extend(1.0))
             .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
         DespawnOnExit(GameState::Dead),
-    ));
+    )).id();
+
+    if let Some(kind) = held_item_opt {
+        commands.entity(player_id).insert(HeldItem(kind));
+    }
 
     commands.insert_resource(PlayerStats {
         steps,
@@ -69,15 +74,16 @@ fn sync_player_stats(
     }
 }
 
-/// Save player state before exiting a floor, applying Force tier recovery and +20 steps bonus.
+/// Save raw player state on floor exit. Recovery is applied in the Rest screen choice handler.
 fn on_enter_rest(
     mut commands: Commands,
-    player_q: Query<(Entity, &CurrentSteps, &Force), With<Player>>,
+    player_q: Query<(Entity, &CurrentSteps, &Force, Option<&HeldItem>), With<Player>>,
 ) {
-    if let Ok((entity, steps, force)) = player_q.single() {
+    if let Ok((entity, steps, force, held_item)) = player_q.single() {
         commands.insert_resource(PlayerPersistence {
             steps: steps.0,
             force: force.0,
+            held_item: held_item.map(|h| h.0),
         });
         commands.entity(entity).despawn();
     }

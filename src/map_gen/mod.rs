@@ -6,7 +6,7 @@ use crate::config::{CenturionConfig, RunSeed};
 pub mod room;
 pub mod procgen;
 pub use room::{GridPos, TileKind, RoomLayout, build_room, grid_to_world, world_to_grid, TILE_SIZE};
-pub use procgen::{build_room_proc, generate_enemy_defs};
+pub use procgen::{build_room_proc, generate_enemy_defs, generate_item_defs};
 
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MapGenSet;

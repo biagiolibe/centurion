@@ -1,5 +1,6 @@
 use super::room::{GridPos, RoomLayout, TileKind, GRID_WIDTH, GRID_HEIGHT};
 use crate::enemies::components::{EnemyDef, EnemyBehavior, Axis};
+use crate::items::components::{ItemDef, ItemKind};
 use std::collections::VecDeque;
 
 /// LCG sub-seed mixer. Unique per (run, floor, salt) triple.
@@ -166,6 +167,44 @@ pub fn generate_enemy_defs(
         .collect()
 }
 
+/// Generate 1–2 item definitions procedurally, avoiding spawn, exit, walls, and enemy positions.
+pub fn generate_item_defs(
+    floor: u8,
+    run_seed: u64,
+    layout: &RoomLayout,
+    exit_pos: GridPos,
+    enemy_positions: &[GridPos],
+) -> Vec<ItemDef> {
+    let count = 1 + (sub_seed(run_seed, floor, 200) % 2) as usize;
+    let player_spawn = GridPos { x: 1, y: 1 };
+
+    let candidates: Vec<GridPos> = (1u8..7)
+        .flat_map(|y| (1u8..7).map(move |x| GridPos { x, y }))
+        .filter(|p| {
+            layout.get(p.x, p.y) == TileKind::Floor
+                && *p != player_spawn
+                && *p != exit_pos
+                && !enemy_positions.contains(p)
+        })
+        .collect();
+
+    let shuffled = shuffle_candidates(candidates, sub_seed(run_seed, floor, 201));
+
+    shuffled
+        .into_iter()
+        .take(count)
+        .enumerate()
+        .map(|(i, pos)| {
+            let kind = if sub_seed(run_seed, floor, 202 + i as u64) % 2 == 0 {
+                ItemKind::Ration
+            } else {
+                ItemKind::Whetstone
+            };
+            ItemDef { pos, kind }
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -244,6 +283,22 @@ mod tests {
             assert_eq!(layout.get(0, i), TileKind::Wall);
             assert_eq!(layout.get(7, i), TileKind::Wall);
         }
+    }
+
+    #[test]
+    fn test_item_positions_avoid_walls_spawn_exit_enemies() {
+        let (layout, exit) = build_room_proc(1, 0xFEEDFACE);
+        let enemy_defs = generate_enemy_defs(1, 0xFEEDFACE, &layout, exit);
+        let enemy_positions: Vec<GridPos> = enemy_defs.iter().map(|d| d.pos).collect();
+        let items = generate_item_defs(1, 0xFEEDFACE, &layout, exit, &enemy_positions);
+        let player_spawn = GridPos { x: 1, y: 1 };
+        for item in &items {
+            assert_ne!(item.pos, player_spawn, "Item on player spawn");
+            assert_ne!(item.pos, exit, "Item on exit");
+            assert_ne!(layout.get(item.pos.x, item.pos.y), TileKind::Wall, "Item on wall");
+            assert!(!enemy_positions.contains(&item.pos), "Item on enemy");
+        }
+        assert!(items.len() >= 1 && items.len() <= 2);
     }
 
     #[test]
