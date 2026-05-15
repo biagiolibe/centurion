@@ -47,6 +47,7 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 - `[ ]` **CEN-020 — Enemy Scaling: Difficoltà Graduale** 🟡 P2 — `base_force = floor+1`, spread `+1` per nemico (era `+2`)
 - `[ ]` **CEN-021 — Rest Recovery: Minimo +5** 🟡 P2 — `tier_recovery` garantisce sempre almeno +5 di forza
 - `[ ]` **CEN-022 — Score Formula: Includi Combat & Items** 🟢 P3 — `enemies_defeated×15 + items_collected×10`, rimuovere penalità steps
+- `[ ]` **CEN-023 — Whetstone: Full Tier Up** 🟢 P3 — Whetstone applica un tier completo di forza al rest invece di +1
 
 ### 🤖 Entità & Meccaniche (MVP ✅)
 - `[x]` Movimento giocatore (1 passo = -1 Step)

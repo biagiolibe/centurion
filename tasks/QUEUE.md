@@ -26,6 +26,7 @@
 20. `[ ]` **CEN-020**: Enemy Scaling — Difficoltà Graduale 🟡 P2 — [CEN-020](CEN-020-enemy-scaling-graduale.md)
 21. `[ ]` **CEN-021**: Rest Recovery — Minimo +5 🟡 P2 — [CEN-021](CEN-021-rest-recovery-minimo-5.md)
 22. `[ ]` **CEN-022**: Score Formula — Combat & Items 🟢 P3 — [CEN-022](CEN-022-score-formula-combat-items.md)
+23. `[ ]` **CEN-023**: Whetstone — Full Tier Up 🟢 P3 — [CEN-023](CEN-023-whetstone-tier-up.md)
 
 ---
 
