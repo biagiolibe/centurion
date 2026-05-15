@@ -7,6 +7,7 @@ pub use components::{Player, CurrentSteps, Force, PlayerStats, PlayerPersistence
 use crate::state::GameState;
 use crate::map_gen::{GridPos, grid_to_world, TILE_SIZE};
 use crate::items::HeldItem;
+use crate::config::{CenturionConfig, RunStats};
 
 pub struct PlayerPlugin;
 
@@ -78,6 +79,8 @@ fn sync_player_stats(
 fn on_enter_rest(
     mut commands: Commands,
     player_q: Query<(Entity, &CurrentSteps, &Force, Option<&HeldItem>), With<Player>>,
+    config: Res<CenturionConfig>,
+    mut run_stats: ResMut<RunStats>,
 ) {
     if let Ok((entity, steps, force, held_item)) = player_q.single() {
         commands.insert_resource(PlayerPersistence {
@@ -87,4 +90,5 @@ fn on_enter_rest(
         });
         commands.entity(entity).despawn();
     }
+    run_stats.floors_cleared = config.current_floor.saturating_sub(1);
 }

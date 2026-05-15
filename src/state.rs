@@ -5,9 +5,10 @@ use bevy::prelude::*;
 /// Valid transitions:
 /// - Loading     → Room
 /// - Room        → CombatEvent | Rest | Dead
-/// - CombatEvent → Room | Dead
+/// - CombatEvent → Room | Dead | WinScreen
 /// - Rest        → Room
 /// - Dead        → Loading
+/// - WinScreen   → Loading
 ///
 /// PATTERN: Use `DespawnOnExit<GameState>` on all in-game entities.
 /// When exiting a state, Bevy automatically despawns all entities carrying
@@ -34,4 +35,6 @@ pub enum GameState {
     Rest,
     /// Game over state: showing final run statistics.
     Dead,
+    /// Victory state: player defeated the floor 10 boss.
+    WinScreen,
 }

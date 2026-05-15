@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use rand::Rng;
 use crate::state::GameState;
-use crate::config::RunSeed;
+use crate::config::{RunSeed, RunStats};
 
 pub struct StatePlugin;
 
@@ -17,6 +17,7 @@ impl Plugin for StatePlugin {
 fn loading_to_room(mut commands: Commands, mut next: ResMut<NextState<GameState>>) {
     let seed = rand::thread_rng().gen::<u64>();
     commands.insert_resource(RunSeed(seed));
+    commands.insert_resource(RunStats::default());
     info!("Loading → Room transition; New run seed: 0x{:016x}", seed);
     next.set(GameState::Room);
 }

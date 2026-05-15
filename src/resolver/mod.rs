@@ -3,6 +3,7 @@ use bevy::ecs::message::MessageReader;
 use crate::state::GameState;
 use crate::player::{Player, Force};
 use crate::enemies::{Enemy, EnemyForce};
+use crate::config::{CenturionConfig, RunStats};
 use crate::tactics::MovementSet;
 use crate::tactics::CombatIntent;
 use crate::map_gen::{GridPos, grid_to_world};
@@ -49,10 +50,13 @@ fn resolve_combat(
     mut combat_reader: MessageReader<CombatIntent>,
     mut player_q: Query<(Entity, &mut Force), With<Player>>,
     enemy_force_q: Query<&EnemyForce, With<Enemy>>,
+    all_enemies: Query<(), With<Enemy>>,
     current_force: Res<CurrentPlayerForce>,
+    config: Res<CenturionConfig>,
     mut victory: ResMut<PendingPlayerVictory>,
     mut next_state: ResMut<NextState<GameState>>,
     mut last_outcome: ResMut<LastCombatOutcome>,
+    mut run_stats: ResMut<RunStats>,
 ) {
     for intent in combat_reader.read() {
         // Phase 1: Get player entity and extract force
@@ -83,10 +87,16 @@ fn resolve_combat(
                     if let Some((_, mut pf)) = iter.next() {
                         pf.0 = new_force;
                     }
+                    run_stats.enemies_defeated += 1;
+                    let is_last_enemy = all_enemies.iter().count() == 1;
                     victory.target_pos = Some(intent.target_pos);
                     commands.entity(intent.defender).despawn();
                     info!("Combat: Player wins! Force {} -> {}", player_force_val + enemy_force_val, new_force);
-                    *last_outcome = LastCombatOutcome::Victory;
+                    if config.current_floor == 10 && is_last_enemy {
+                        *last_outcome = LastCombatOutcome::BossVictory;
+                    } else {
+                        *last_outcome = LastCombatOutcome::Victory;
+                    }
                     next_state.set(GameState::CombatEvent);
                 }
                 CombatResult::PlayerDies => {

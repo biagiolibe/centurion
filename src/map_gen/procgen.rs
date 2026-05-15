@@ -103,6 +103,7 @@ fn place_pillars(
 }
 
 /// Main entry point: builds a full room layout procedurally.
+/// Floor 10 returns an open arena with no exit and no pillars.
 pub fn build_room_proc(floor: u8, run_seed: u64) -> (RoomLayout, GridPos) {
     let mut layout = [[TileKind::Floor; 8]; 8];
 
@@ -113,6 +114,11 @@ pub fn build_room_proc(floor: u8, run_seed: u64) -> (RoomLayout, GridPos) {
     for y in 0..GRID_HEIGHT {
         layout[y as usize][0] = TileKind::Wall;
         layout[y as usize][7] = TileKind::Wall;
+    }
+
+    if floor == 10 {
+        // Open boss arena: no exit, no pillars
+        return (RoomLayout::new(layout), GridPos { x: 0, y: 0 });
     }
 
     let exit_pos = place_exit(floor, run_seed);
@@ -262,7 +268,7 @@ mod tests {
     #[test]
     fn test_room_always_connected() {
         for seed in [0u64, 1, 7, 42, 12345, 999999, u64::MAX] {
-            for floor in 1u8..=10 {
+            for floor in 1u8..=9 {
                 let (layout, exit) = build_room_proc(floor, seed);
                 assert!(
                     is_reachable(GridPos { x: 1, y: 1 }, exit, &layout),

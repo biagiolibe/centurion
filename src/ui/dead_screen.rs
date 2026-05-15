@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::{CenturionConfig, RunSeed};
+use crate::config::{CenturionConfig, RunSeed, RunStats};
 use crate::player::{Player, CurrentSteps, Force, PlayerPersistence};
 use crate::resolver::LastCombatOutcome;
 
@@ -12,11 +12,12 @@ pub enum DeathCause {
 }
 
 #[derive(Resource, Clone)]
-pub struct RunStats {
-    pub floors_cleared: u8,
-    pub steps_taken: i32,
-    pub steps_remaining: i32,
-    pub cause: DeathCause,
+struct DeadStats {
+    floors_cleared: u8,
+    steps_remaining: i32,
+    force: i32,
+    score: i32,
+    cause: DeathCause,
 }
 
 #[derive(Component)]
@@ -28,19 +29,20 @@ impl Plugin for DeadScreenPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
                 OnEnter(GameState::Dead),
-                (populate_run_stats, spawn_dead_screen).chain(),
+                (populate_dead_stats, spawn_dead_screen).chain(),
             )
             .add_systems(Update, dead_input.run_if(in_state(GameState::Dead)));
     }
 }
 
-fn populate_run_stats(
+fn populate_dead_stats(
     mut commands: Commands,
     config: Res<CenturionConfig>,
     player_q: Query<(&CurrentSteps, &Force), With<Player>>,
     last_outcome: Res<LastCombatOutcome>,
+    run_stats: Res<RunStats>,
 ) {
-    let (steps_remaining, _force) = player_q
+    let (steps_remaining, force) = player_q
         .single()
         .map(|(s, f)| (s.0, f.0))
         .unwrap_or((0, 0));
@@ -51,23 +53,26 @@ fn populate_run_stats(
         DeathCause::OutOfSteps
     } else {
         match *last_outcome {
-            LastCombatOutcome::Defeat => DeathCause::KilledByEnemy,
+            LastCombatOutcome::Defeat | LastCombatOutcome::BossVictory => DeathCause::KilledByEnemy,
             LastCombatOutcome::Victory => DeathCause::OutOfSteps,
         }
     };
 
-    commands.insert_resource(RunStats {
+    let score = run_stats.calculate_score(floors_cleared, steps_remaining.max(0), force);
+
+    commands.insert_resource(DeadStats {
         floors_cleared,
-        steps_taken: 100 - steps_remaining.max(0),
         steps_remaining: steps_remaining.max(0),
+        force,
+        score,
         cause,
     });
 }
 
-fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>, run_seed: Res<RunSeed>) {
+fn spawn_dead_screen(mut commands: Commands, stats: Res<DeadStats>, run_seed: Res<RunSeed>) {
     let cause_text = match stats.cause {
-        DeathCause::OutOfSteps => "Cause: Out of steps".to_string(),
-        DeathCause::KilledByEnemy => "Cause: Killed by enemy".to_string(),
+        DeathCause::OutOfSteps => "Cause: Out of steps",
+        DeathCause::KilledByEnemy => "Cause: Killed by enemy",
     };
 
     commands
@@ -96,7 +101,7 @@ fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>, run_seed: Res
                 TextColor(Color::WHITE),
             ));
             parent.spawn((
-                Text::new(format!("Steps taken: {}", stats.steps_taken)),
+                Text::new(format!("Final Force: {}", stats.force)),
                 TextFont { font_size: 24.0, ..default() },
                 TextColor(Color::WHITE),
             ));
@@ -108,6 +113,11 @@ fn spawn_dead_screen(mut commands: Commands, stats: Res<RunStats>, run_seed: Res
             parent.spawn((
                 Text::new(cause_text),
                 TextFont { font_size: 24.0, ..default() },
+                TextColor(Color::WHITE),
+            ));
+            parent.spawn((
+                Text::new(format!("Score: {}", stats.score)),
+                TextFont { font_size: 28.0, ..default() },
                 TextColor(Color::WHITE),
             ));
             parent.spawn((

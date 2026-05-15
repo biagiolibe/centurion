@@ -2,7 +2,8 @@ use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
 use crate::config::{CenturionConfig, RunSeed};
-use crate::map_gen::{RoomLayout, grid_to_world, TILE_SIZE, MapGenSet, CurrentExitPos, build_room_proc, generate_enemy_defs};
+use crate::player::PlayerPersistence;
+use crate::map_gen::{GridPos, RoomLayout, grid_to_world, TILE_SIZE, MapGenSet, CurrentExitPos, build_room_proc, generate_enemy_defs};
 
 pub mod components;
 pub mod movement;
@@ -38,8 +39,30 @@ fn spawn_enemies(
     layout: Option<Res<RoomLayout>>,
     exit_pos_res: Option<Res<CurrentExitPos>>,
     existing: Query<(), With<Enemy>>,
+    persistence: Option<Res<PlayerPersistence>>,
 ) {
     if !existing.is_empty() {
+        return;
+    }
+
+    // Floor 10: single boss at center, force = entry_force * 2
+    if config.current_floor == 10 {
+        let boss_force = persistence.map(|p| p.force * 2).unwrap_or(20);
+        let boss_pos = GridPos { x: 4, y: 4 };
+        commands.spawn((
+            Enemy,
+            EnemyForce(boss_force),
+            EnemyBehavior::Static,
+            boss_pos,
+            Sprite {
+                color: Color::srgb(0.9, 0.1, 0.1),
+                ..default()
+            },
+            Transform::from_translation(grid_to_world(boss_pos).extend(0.5))
+                .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
+            DespawnOnExit(GameState::Dead),
+        ));
+        info!("Boss spawned at (4,4) with force {}", boss_force);
         return;
     }
 

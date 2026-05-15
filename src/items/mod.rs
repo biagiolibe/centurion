@@ -29,7 +29,7 @@ fn spawn_items(
     enemy_q: Query<&GridPos, With<Enemy>>,
     existing: Query<(), With<Item>>,
 ) {
-    if !existing.is_empty() {
+    if !existing.is_empty() || config.current_floor == 10 {
         return;
     }
 

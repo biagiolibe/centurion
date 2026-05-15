@@ -6,6 +6,7 @@ use crate::player::Player;
 pub enum LastCombatOutcome {
     #[default]
     Victory,
+    BossVictory,
     Defeat,
 }
 
@@ -56,6 +57,7 @@ fn update_flash(
         commands.remove_resource::<ActiveFlash>();
         match flash.outcome {
             LastCombatOutcome::Victory => next_state.set(GameState::Room),
+            LastCombatOutcome::BossVictory => next_state.set(GameState::WinScreen),
             LastCombatOutcome::Defeat => next_state.set(GameState::Dead),
         }
     }
@@ -63,7 +65,7 @@ fn update_flash(
 
 fn flash_color(outcome: LastCombatOutcome, t: f32) -> Color {
     match outcome {
-        LastCombatOutcome::Victory => {
+        LastCombatOutcome::Victory | LastCombatOutcome::BossVictory => {
             // 0..0.5 WHITE→YELLOW, 0.5..1.0 YELLOW→WHITE
             let yellow = Color::srgb(1.0, 1.0, 0.0);
             if t < 0.5 {

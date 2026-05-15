@@ -18,7 +18,7 @@
 16. `[x]` **CEN-016**: Items & Rest Choices — Ration, Whetstone, 3 Scelte
 
 ### Phase 4: Endgame — Win Condition & Score
-17. `[ ]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System
+17. `[x]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System
 
 ---
 
@@ -80,4 +80,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-04-28 — Milestone Post-MVP aggiunto (CEN-014 a CEN-017)*
+*Ultimo aggiornamento: 2026-05-15 — CEN-017 completato; Milestone Gameplay Depth Overhaul ✅*

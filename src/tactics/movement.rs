@@ -6,7 +6,7 @@ use crate::player::{Player, CurrentSteps};
 use crate::input::MoveIntent;
 use crate::enemies::Enemy;
 use crate::tactics::{CombatIntent, TurnPending};
-use crate::config::CenturionConfig;
+use crate::config::{CenturionConfig, RunStats};
 use crate::items::{Item, ItemKind, HeldItem};
 
 pub fn can_move_to(pos: GridPos, layout: &RoomLayout) -> bool {
@@ -25,6 +25,7 @@ pub fn apply_movement(
     mut next_state: ResMut<NextState<GameState>>,
     mut config: ResMut<CenturionConfig>,
     mut turn_pending: ResMut<TurnPending>,
+    mut run_stats: ResMut<RunStats>,
 ) {
     if *state.get() != GameState::Room {
         return;
@@ -71,12 +72,14 @@ pub fn apply_movement(
         *grid_pos = new_pos;
         transform.translation = grid_to_world(new_pos).extend(1.0);
         steps.0 -= 1;
+        run_stats.total_steps_taken += 1;
         turn_pending.0 = true;
 
         info!("Player moved to ({}, {}), steps remaining: {}", new_pos.x, new_pos.y, steps.0);
 
         // Item pickup
         if let Some((item_entity, _, kind)) = item_q.iter().find(|(_, p, _)| **p == new_pos) {
+            run_stats.items_collected += 1;
             match *kind {
                 ItemKind::Ration => {
                     steps.0 += 10;
