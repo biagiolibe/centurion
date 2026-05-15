@@ -37,18 +37,15 @@ fn spawn_rest_screen(
 
     let floor_cleared = config.current_floor.saturating_sub(1);
     let steps = p.steps;
-    let force = p.force;
+    let force = p.force;  // già include il +1 Whetstone se presente
     let held = p.held_item;
 
-    let adjusted_force = if held == Some(ItemKind::Whetstone) { force + 1 } else { force };
-
-    let opt1_force = tier_recovery(adjusted_force);
-    let opt3_force = tier_recovery(tier_recovery(adjusted_force));
+    let opt1_force = tier_recovery(force);
+    let opt3_force = tier_recovery(tier_recovery(force));
 
     let held_line = match held {
-        Some(ItemKind::Whetstone) => format!("Holding: Whetstone  (+1 force tier bonus)"),
-        Some(ItemKind::Ration) => "Holding: Ration".to_string(),
-        None => String::new(),
+        Some(ItemKind::Whetstone) => "Whetstone (+1 force applicato)",
+        _ => "",
     };
 
     commands
@@ -132,23 +129,16 @@ fn handle_rest_choice(
 
     let Some(p) = persistence.as_mut() else { return; };
 
-    let adjusted_force = if p.held_item == Some(ItemKind::Whetstone) {
-        p.force + 1
-    } else {
-        p.force
-    };
-
     match choice {
         1 => {
             p.steps += 20;
-            p.force = tier_recovery(adjusted_force);
+            p.force = tier_recovery(p.force);
         }
         2 => {
             p.steps += 40;
-            // force invariata
         }
         3 => {
-            p.force = tier_recovery(tier_recovery(adjusted_force));
+            p.force = tier_recovery(tier_recovery(p.force));
         }
         _ => unreachable!(),
     }

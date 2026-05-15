@@ -20,6 +20,13 @@
 ### Phase 4: Endgame — Win Condition & Score
 17. `[x]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System
 
+### Phase 5: Bilanciamento
+18. `[ ]` **CEN-018**: Boss Reattivo + ItemKind::Runa 🔴 P1 — [CEN-018](CEN-018-boss-reattivo-runa.md)
+19. `[ ]` **CEN-019**: Combat Formula — Tie Survival 🔴 P1 — [CEN-019](CEN-019-combat-tie-survival.md)
+20. `[ ]` **CEN-020**: Enemy Scaling — Difficoltà Graduale 🟡 P2 — [CEN-020](CEN-020-enemy-scaling-graduale.md)
+21. `[ ]` **CEN-021**: Rest Recovery — Minimo +5 🟡 P2 — [CEN-021](CEN-021-rest-recovery-minimo-5.md)
+22. `[ ]` **CEN-022**: Score Formula — Combat & Items 🟢 P3 — [CEN-022](CEN-022-score-formula-combat-items.md)
+
 ---
 
 ## Milestone: Tactical Core (MVP) ✅ COMPLETATO
@@ -80,4 +87,4 @@ CEN-001 → CEN-002 → CEN-003 → CEN-004
 
 ---
 
-*Ultimo aggiornamento: 2026-05-15 — CEN-017 completato; Milestone Gameplay Depth Overhaul ✅*
+*Ultimo aggiornamento: 2026-05-15 — Phase 5 Bilanciamento aggiunta (CEN-018 a CEN-022)*

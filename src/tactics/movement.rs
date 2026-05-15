@@ -87,7 +87,7 @@ pub fn apply_movement(
                 }
                 ItemKind::Whetstone => {
                     commands.entity(player_entity).insert(HeldItem(*kind));
-                    info!("Picked up Whetstone! Holding for rest bonus.");
+                    info!("Picked up Whetstone! Force +1 on next rest.");
                 }
             }
             commands.entity(item_entity).despawn();

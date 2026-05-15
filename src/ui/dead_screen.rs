@@ -86,6 +86,7 @@ fn spawn_dead_screen(mut commands: Commands, stats: Res<DeadStats>, run_seed: Re
                 row_gap: Val::Px(12.0),
                 ..default()
             },
+            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.92)),
             DeadScreenRoot,
             DespawnOnExit(GameState::Dead),
         ))

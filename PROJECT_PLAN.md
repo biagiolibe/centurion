@@ -37,9 +37,16 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 ### 🗺️ Mondo & Generazione
 - `[x]` Algoritmo di distribuzione entità (Nemici, Consumabili, Uscita) — CEN-004 a CEN-013
 - `[x]` **Fase 1: Enemy AI — Movimento dinamico (Patrol & Guard)** — CEN-014
-- `[ ]` **Fase 2: Procedural Generation — Varietà tra run e seeding** — CEN-015
-- `[ ]` **Fase 3: Items & Rest Choices — Resource Management** — CEN-016
-- `[ ]` **Fase 4: Endgame & Win Condition — Score System** — CEN-017
+- `[x]` **Fase 2: Procedural Generation — Varietà tra run e seeding** — CEN-015
+- `[x]` **Fase 3: Items & Rest Choices — Resource Management** — CEN-016
+- `[x]` **Fase 4: Endgame & Win Condition — Score System** — CEN-017
+
+### ⚖️ Bilanciamento (Post-MVP)
+- `[ ]` **CEN-018 — Boss Reattivo + ItemKind::Runa** 🔴 P1 — `boss_force = 10 + (enemies×2) - (rune×5)`; nuovo item viola che indebolisce il boss
+- `[ ]` **CEN-019 — Combat Formula: Tie Survival** 🔴 P1 — Pareggio sopravvive con F1 invece di morte istantanea
+- `[ ]` **CEN-020 — Enemy Scaling: Difficoltà Graduale** 🟡 P2 — `base_force = floor+1`, spread `+1` per nemico (era `+2`)
+- `[ ]` **CEN-021 — Rest Recovery: Minimo +5** 🟡 P2 — `tier_recovery` garantisce sempre almeno +5 di forza
+- `[ ]` **CEN-022 — Score Formula: Includi Combat & Items** 🟢 P3 — `enemies_defeated×15 + items_collected×10`, rimuovere penalità steps
 
 ### 🤖 Entità & Meccaniche (MVP ✅)
 - `[x]` Movimento giocatore (1 passo = -1 Step)
@@ -58,4 +65,4 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ---
 
-*Ultimo aggiornamento: 2026-04-28*
+*Ultimo aggiornamento: 2026-05-15 — CEN-017 completato; sezione Bilanciamento aggiunta (CEN-018 a CEN-022)*

@@ -42,6 +42,7 @@ fn spawn_win_screen(
                 row_gap: Val::Px(12.0),
                 ..default()
             },
+            BackgroundColor(Color::srgba(0.0, 0.0, 0.0, 0.92)),
             WinScreenRoot,
             DespawnOnExit(GameState::WinScreen),
         ))

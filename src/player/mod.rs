@@ -8,6 +8,7 @@ use crate::state::GameState;
 use crate::map_gen::{GridPos, grid_to_world, TILE_SIZE};
 use crate::items::HeldItem;
 use crate::config::{CenturionConfig, RunStats};
+use crate::items::ItemKind;
 
 pub struct PlayerPlugin;
 
@@ -83,9 +84,10 @@ fn on_enter_rest(
     mut run_stats: ResMut<RunStats>,
 ) {
     if let Ok((entity, steps, force, held_item)) = player_q.single() {
+        let whetstone_bonus = if held_item.map(|h| h.0) == Some(ItemKind::Whetstone) { 1 } else { 0 };
         commands.insert_resource(PlayerPersistence {
             steps: steps.0,
-            force: force.0,
+            force: force.0 + whetstone_bonus,
             held_item: held_item.map(|h| h.0),
         });
         commands.entity(entity).despawn();
