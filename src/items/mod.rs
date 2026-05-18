@@ -51,6 +51,7 @@ fn spawn_items(
         let color = match def.kind {
             ItemKind::Ration => Color::srgb(0.0, 0.9, 0.9),
             ItemKind::Whetstone => Color::srgb(1.0, 0.6, 0.0),
+            ItemKind::Runa => Color::srgb(0.7, 0.3, 1.0),
         };
 
         commands.spawn((

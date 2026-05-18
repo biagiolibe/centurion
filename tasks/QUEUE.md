@@ -21,12 +21,19 @@
 17. `[x]` **CEN-017**: Win Condition — Floor 10 Boss, WinScreen, Score System
 
 ### Phase 5: Bilanciamento
-18. `[ ]` **CEN-018**: Boss Reattivo + ItemKind::Runa 🔴 P1 — [CEN-018](CEN-018-boss-reattivo-runa.md)
+18. `[x]` **CEN-018**: Boss Reattivo + ItemKind::Runa 🔴 P1 — [CEN-018](done/CEN-018-boss-reattivo-runa.md)
 19. `[ ]` **CEN-019**: Combat Formula — Tie Survival 🔴 P1 — [CEN-019](CEN-019-combat-tie-survival.md)
 20. `[ ]` **CEN-020**: Enemy Scaling — Difficoltà Graduale 🟡 P2 — [CEN-020](CEN-020-enemy-scaling-graduale.md)
 21. `[ ]` **CEN-021**: Rest Recovery — Minimo +5 🟡 P2 — [CEN-021](CEN-021-rest-recovery-minimo-5.md)
 22. `[ ]` **CEN-022**: Score Formula — Combat & Items 🟢 P3 — [CEN-022](CEN-022-score-formula-combat-items.md)
 23. `[ ]` **CEN-023**: Whetstone — Full Tier Up 🟢 P3 — [CEN-023](CEN-023-whetstone-tier-up.md)
+24. `[ ]` **CEN-024**: Analisi e Fix Bug Gestione Forza 🔴 P1 — [CEN-024](CEN-024-analisi-bug-gestione-forza.md)
+
+### Phase 6: Endless Mode
+25. `[ ]` **CEN-025**: Endless Mode — Gioco infinito oltre floor 10 🟡 P2 — [CEN-025](CEN-025-endless-mode.md)
+
+### Phase 7: UI / Feedback
+26. `[x]` **CEN-026**: HUD — Info Boss Dinamico + Rune 🟡 P2 — [CEN-026](done/CEN-026-hud-boss-dinamico.md)
 
 ---
 

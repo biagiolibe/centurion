@@ -89,6 +89,10 @@ pub fn apply_movement(
                     commands.entity(player_entity).insert(HeldItem(*kind));
                     info!("Picked up Whetstone! Force +1 on next rest.");
                 }
+                ItemKind::Runa => {
+                    run_stats.runes_collected += 1;
+                    info!("Picked up Runa! Boss weakened by 5.");
+                }
             }
             commands.entity(item_entity).despawn();
         }

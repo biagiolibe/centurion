@@ -201,10 +201,10 @@ pub fn generate_item_defs(
         .take(count)
         .enumerate()
         .map(|(i, pos)| {
-            let kind = if sub_seed(run_seed, floor, 202 + i as u64) % 2 == 0 {
-                ItemKind::Ration
-            } else {
-                ItemKind::Whetstone
+            let kind = match sub_seed(run_seed, floor, 202 + i as u64) % 3 {
+                0 => ItemKind::Ration,
+                1 => ItemKind::Whetstone,
+                _ => ItemKind::Runa,
             };
             ItemDef { pos, kind }
         })

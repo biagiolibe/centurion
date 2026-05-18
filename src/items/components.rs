@@ -8,6 +8,7 @@ pub struct Item;
 pub enum ItemKind {
     Ration,
     Whetstone,
+    Runa,
 }
 
 #[derive(Component, Clone, Copy)]

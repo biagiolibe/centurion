@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::CenturionConfig;
+use crate::config::{CenturionConfig, RunStats};
 use crate::player::PlayerPersistence;
 use crate::items::ItemKind;
 
@@ -26,6 +26,7 @@ fn tier_recovery(force: i32) -> i32 {
 fn spawn_rest_screen(
     mut commands: Commands,
     config: Res<CenturionConfig>,
+    run_stats: Res<RunStats>,
     persistence: Option<Res<PlayerPersistence>>,
     existing: Query<(), With<RestScreenRoot>>,
 ) {
@@ -72,6 +73,22 @@ fn spawn_rest_screen(
                 Text::new(format!("Steps: {}   Force: {}", steps, force)),
                 TextFont { font_size: 20.0, ..default() },
                 TextColor(Color::srgb(0.8, 0.8, 0.8)),
+            ));
+            let boss_est = (10 + run_stats.enemies_defeated as i32 * 2
+                - run_stats.runes_collected as i32 * 5)
+                .max(1);
+            parent.spawn((
+                Text::new(format!(
+                    "Boss al floor 10: ~F{}  (nemici: {} | rune: {})",
+                    boss_est, run_stats.enemies_defeated, run_stats.runes_collected
+                )),
+                TextFont { font_size: 18.0, ..default() },
+                TextColor(Color::srgb(1.0, 0.5, 0.2)),
+            ));
+            parent.spawn((
+                Text::new("ogni runa: -5 forza boss  |  ogni nemico: +2 forza boss"),
+                TextFont { font_size: 16.0, ..default() },
+                TextColor(Color::srgb(0.45, 0.45, 0.45)),
             ));
             if !held_line.is_empty() {
                 parent.spawn((

@@ -26,6 +26,7 @@ pub struct RunStats {
     pub total_steps_taken: i32,
     pub enemies_defeated: u32,
     pub items_collected: u32,
+    pub runes_collected: u32,
 }
 
 impl RunStats {

@@ -42,12 +42,15 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 - `[x]` **Fase 4: Endgame & Win Condition — Score System** — CEN-017
 
 ### ⚖️ Bilanciamento (Post-MVP)
-- `[ ]` **CEN-018 — Boss Reattivo + ItemKind::Runa** 🔴 P1 — `boss_force = 10 + (enemies×2) - (rune×5)`; nuovo item viola che indebolisce il boss
+- `[x]` **CEN-018 — Boss Reattivo + ItemKind::Runa** 🔴 P1 — `boss_force = 10 + (enemies×2) - (rune×5)`; nuovo item viola che indebolisce il boss
 - `[ ]` **CEN-019 — Combat Formula: Tie Survival** 🔴 P1 — Pareggio sopravvive con F1 invece di morte istantanea
 - `[ ]` **CEN-020 — Enemy Scaling: Difficoltà Graduale** 🟡 P2 — `base_force = floor+1`, spread `+1` per nemico (era `+2`)
 - `[ ]` **CEN-021 — Rest Recovery: Minimo +5** 🟡 P2 — `tier_recovery` garantisce sempre almeno +5 di forza
 - `[ ]` **CEN-022 — Score Formula: Includi Combat & Items** 🟢 P3 — `enemies_defeated×15 + items_collected×10`, rimuovere penalità steps
 - `[ ]` **CEN-023 — Whetstone: Full Tier Up** 🟢 P3 — Whetstone applica un tier completo di forza al rest invece di +1
+- `[ ]` **CEN-024 — Analisi e Fix Bug Gestione Forza** 🔴 P1 — Whetstone permanente (bonus ogni floor), ordinamento `sync_player_force` vs `resolve_combat`
+- `[ ]` **CEN-025 — Endless Mode** 🟡 P2 — Gioco continua oltre floor 10; boss ogni 10 floor con scala `+(cycle-1)×15`; WinScreen rimosso
+- `[ ]` **CEN-026 — HUD: Info Boss Dinamico + Rune** 🟡 P2 — HUD mostra nemici/rune/boss proiettato in tempo reale; rest screen mostra formula boss corrente
 
 ### 🤖 Entità & Meccaniche (MVP ✅)
 - `[x]` Movimento giocatore (1 passo = -1 Step)
@@ -66,4 +69,4 @@ PROPOSTE  →  (revisione)  →  BACKLOG  →  (sviluppo)  →  COMPLETATI
 
 ---
 
-*Ultimo aggiornamento: 2026-05-15 — CEN-017 completato; sezione Bilanciamento aggiunta (CEN-018 a CEN-022)*
+*Ultimo aggiornamento: 2026-05-18 — CEN-018 completato; CEN-024, CEN-025, CEN-026 aggiunti*

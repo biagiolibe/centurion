@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use bevy::state::state_scoped::DespawnOnExit;
 use crate::state::GameState;
-use crate::config::{CenturionConfig, RunSeed};
-use crate::player::PlayerPersistence;
+use crate::config::{CenturionConfig, RunSeed, RunStats};
 use crate::map_gen::{GridPos, RoomLayout, grid_to_world, TILE_SIZE, MapGenSet, CurrentExitPos, build_room_proc, generate_enemy_defs};
 
 pub mod components;
@@ -39,15 +38,17 @@ fn spawn_enemies(
     layout: Option<Res<RoomLayout>>,
     exit_pos_res: Option<Res<CurrentExitPos>>,
     existing: Query<(), With<Enemy>>,
-    persistence: Option<Res<PlayerPersistence>>,
+    run_stats: Res<RunStats>,
 ) {
     if !existing.is_empty() {
         return;
     }
 
-    // Floor 10: single boss at center, force = entry_force * 2
+    // Floor 10: single boss at center, reactive formula
     if config.current_floor == 10 {
-        let boss_force = persistence.map(|p| p.force * 2).unwrap_or(20);
+        let boss_force = (10 + (run_stats.enemies_defeated as i32 * 2)
+            - (run_stats.runes_collected as i32 * 5))
+            .max(1);
         let boss_pos = GridPos { x: 4, y: 4 };
         commands.spawn((
             Enemy,
@@ -62,7 +63,8 @@ fn spawn_enemies(
                 .with_scale(Vec3::splat(TILE_SIZE * 0.875)),
             DespawnOnExit(GameState::Dead),
         ));
-        info!("Boss spawned at (4,4) with force {}", boss_force);
+        info!("Boss spawned at (4,4) with reactive force {} (enemies: {}, runes: {})",
+            boss_force, run_stats.enemies_defeated, run_stats.runes_collected);
         return;
     }
 
